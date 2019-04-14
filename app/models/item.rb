@@ -31,6 +31,14 @@ class Item < ApplicationRecord
       .limit(limit)
   end
 
+  def unique_slug(new_name = name)
+    if Item.where(name: new_name).where('slug != ?', slug).size >= 1
+      "#{new_name.parameterize}-#{id}"
+    else
+      new_name.parameterize
+    end
+  end
+
   def convert_datetime_to_seconds(datetime)
     days_and_hours = datetime.split(":").first
     days = days_and_hours.split.first.to_i
@@ -47,5 +55,9 @@ class Item < ApplicationRecord
 
   def ordered?
     order_items.count > 0
+  end
+
+  def to_param
+    slug
   end
 end

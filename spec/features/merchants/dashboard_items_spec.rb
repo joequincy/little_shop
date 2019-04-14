@@ -16,7 +16,7 @@ RSpec.describe 'Merchant Dashboard Items page' do
 
   describe 'allows me to disable then re-enable an active item' do
     before :each do
-      @item = create(:item, user: @merchant, name: 'Widget', description: 'Something witty goes here', price: 1.23, inventory: 456)
+      @item = create(:item, user: @merchant, name: 'Widget', description: 'Something witty goes here', price: 1.23, inventory: 456, slug: "Widget")
     end
 
     scenario 'when logged in as merchant' do

@@ -15,6 +15,7 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
+    @user.slug = @user.email.parameterize
     if @user.save
       session[:user_id] = @user.id
       flash[:success] = "Registration Successful! You are now logged in."
@@ -28,6 +29,9 @@ class UsersController < ApplicationController
 
   def update
     @user = current_user
+    if @user.email != params[:user][:email]
+      @user.slug = params[:user][:email].parameterize
+    end
     @user.update(user_update_params)
     if @user.save
       flash[:success] = "Your profile has been updated"

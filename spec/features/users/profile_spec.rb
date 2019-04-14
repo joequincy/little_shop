@@ -87,6 +87,34 @@ RSpec.describe 'user profile', type: :feature do
           end
           expect(updated_user.password_digest).to_not eq(old_digest)
         end
+
+        scenario 'only updates slug if email is changed' do
+          login_as(@user)
+
+          visit edit_profile_path
+
+          fill_in :user_name, with: @updated_name
+          fill_in :user_address, with: @updated_address
+          fill_in :user_city, with: @updated_city
+          fill_in :user_state, with: @updated_state
+          fill_in :user_zip, with: @updated_zip
+          fill_in :user_password, with: @updated_password
+          fill_in :user_password_confirmation, with: @updated_password
+
+          click_button 'Submit'
+
+          updated_user = User.find(@user.id)
+
+          expect(updated_user.slug).to eq(@user.slug)
+
+          visit edit_profile_path
+          fill_in :user_email, with: @updated_email
+          click_button 'Submit'
+
+          updated_user = User.find(@user.id)
+          expect(updated_user.slug).to_not eq(@user.slug)
+        end
+
         scenario 'works if no password is given' do
           login_as(@user)
           old_digest = @user.password_digest

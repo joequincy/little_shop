@@ -20,7 +20,7 @@ class User < ApplicationRecord
   def top_items_sold_by_quantity(limit)
     items.joins(order_items: :order)
          .where(order_items: {fulfilled: true}, orders: {status: :shipped})
-         .select('items.id, items.name, sum(order_items.quantity) as quantity')
+         .select('items.id, items.name, items.slug, sum(order_items.quantity) as quantity')
          .group(:id)
          .order('quantity DESC, id')
          .limit(limit)
@@ -94,6 +94,10 @@ class User < ApplicationRecord
          .select('users.name, sum(order_items.quantity) AS quantity')
          .order('quantity DESC')
          .limit(1).first
+  end
+
+  def to_param
+    slug
   end
 
   def self.active_merchants

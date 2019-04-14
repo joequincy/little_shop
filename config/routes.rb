@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  slug = { slug: /[^\/]+/ }
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root 'welcome#index'
 
@@ -11,13 +12,13 @@ Rails.application.routes.draw do
 
   # Cart Paths
   get '/cart', to: 'cart#show'
-  post '/cart/items/:id', to: 'cart#increment', as: :cart_item
-  patch '/cart/items/:id', to: 'cart#decrement'
+  post '/cart/items/:slug', to: 'cart#increment', as: :cart_item, constraints: slug
+  patch '/cart/items/:slug', to: 'cart#decrement', constraints: slug
   delete '/cart', to: 'cart#destroy', as: :empty_cart
-  delete '/cart/items/:id', to: 'cart#remove_item', as: :remove_item
+  delete '/cart/items/:slug', to: 'cart#remove_item', as: :remove_item, constraints: slug
 
-  resources :items, only: [:index, :show]
-  resources :merchants, only: [:index]
+  resources :items, only: [:index, :show], param: :slug, constraints: slug
+  resources :merchants, only: [:index], param: :slug, constraints: slug
 
   # User Profile Paths
   get '/profile', to: 'users#show', as: :profile
@@ -30,9 +31,9 @@ Rails.application.routes.draw do
   namespace :dashboard do
     get '/', to: 'dashboard#index'
 
-    resources :items
-    patch '/items/:id/enable', to: 'items#enable', as: 'enable_item'
-    patch '/items/:id/disable', to: 'items#disable', as: 'disable_item'
+    resources :items, param: :slug, constraints: slug
+    patch '/items/:slug/enable', to: 'items#enable', as: 'enable_item', constraints: slug
+    patch '/items/:slug/disable', to: 'items#disable', as: 'disable_item', constraints: slug
     put '/order_items/:order_item_id/fulfill', to: 'orders#fulfill', as: 'fulfill_order_item'
     resources :orders, only: [:show]
   end
@@ -40,17 +41,17 @@ Rails.application.routes.draw do
   namespace :admin do
     get '/dashboard', to: 'dashboard#index'
 
-    patch '/merchants/:id/downgrade', to: 'merchants#downgrade', as: :downgrade_merchant
-    patch '/users/:id/upgrade', to: 'users#upgrade', as: :upgrade_user
-    resources :users, only: [:index, :show]
+    patch '/merchants/:slug/downgrade', to: 'merchants#downgrade', as: :downgrade_merchant, constraints: slug
+    patch '/users/:slug/upgrade', to: 'users#upgrade', as: :upgrade_user, constraints: slug
+    resources :users, only: [:index, :show], param: :slug, constraints: slug
 
     resources :orders, only: [:show]
     patch '/orders/:order_id/ship', to: 'orders#ship', as: 'order_ship'
 
-    patch '/merchants/:id/enable', to: 'merchants#enable', as: :enable_merchant
-    patch '/merchants/:id/disable', to: 'merchants#disable', as: :disable_merchant
-    resources :merchants, only: [:show] do
-      resources :items, only: [:index, :new]
+    patch '/merchants/:slug/enable', to: 'merchants#enable', as: :enable_merchant, constraints: slug
+    patch '/merchants/:slug/disable', to: 'merchants#disable', as: :disable_merchant, constraints: slug
+    resources :merchants, only: [:show], param: :slug, constraints: slug do
+      resources :items, only: [:index, :new], param: :slug, constraints: slug
       resources :orders, only: [:show]
     end
   end

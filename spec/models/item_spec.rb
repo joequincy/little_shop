@@ -83,5 +83,24 @@ RSpec.describe Item, type: :model do
         expect(unordered_item.ordered?).to be_falsy
       end
     end
+
+    describe "#unique_slug" do
+      it "returns the item name if there are no other items with that name" do
+        expect(@item.unique_slug).to eq(@item.name.parameterize)
+      end
+
+      it "returns the item name with an attached id if there are multiple items with the same name" do
+        item_2 = create(:item)
+        item_2.name = @item.name
+
+        expect(item_2.unique_slug).to eq("#{item_2.name.parameterize}-#{item_2.id}")
+      end
+    end
+
+    describe "#to_param" do
+      it "returns the slug instead of the id" do
+        expect(@item.to_param).to eq(@item.slug)
+      end
+    end
   end
 end

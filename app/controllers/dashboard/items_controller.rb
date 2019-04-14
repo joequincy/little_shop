@@ -9,6 +9,7 @@ class Dashboard::ItemsController < Dashboard::BaseController
 
   def create
     @item = current_user.items.new(item_params)
+    @item.slug = @item.unique_slug
     @item.active = true
     if @item.save
       flash[:success] = "Your Item has been saved!"
@@ -20,23 +21,26 @@ class Dashboard::ItemsController < Dashboard::BaseController
   end
 
   def edit
-    @item = Item.find(params[:id])
+    @item = Item.find_by(slug: params[:slug])
   end
 
   def update
-    @item = Item.find(params[:id])
+    @item = Item.find_by(slug: params[:slug])
+    if @item.name != item_params[:name]
+      @item.slug = @item.unique_slug(item_params[:name])
+    end
     if @item.update(item_params)
       flash[:success] = "Your Item has been updated!"
       redirect_to dashboard_items_path
     else
       flash[:danger] = @item.errors.full_messages
-      @item = Item.find(params[:id])
+      @item = Item.find_by(slug: params[:slug])
       render :edit
     end
   end
 
   def enable
-    @item = Item.find(params[:id])
+    @item = Item.find_by(slug: params[:slug])
     if @item.user == current_user
       toggle_active(@item, true)
       redirect_to dashboard_items_path
@@ -46,7 +50,7 @@ class Dashboard::ItemsController < Dashboard::BaseController
   end
 
   def disable
-    @item = Item.find(params[:id])
+    @item = Item.find_by(slug: params[:slug])
     if @item.user == current_user
       toggle_active(@item, false)
       redirect_to dashboard_items_path
@@ -56,7 +60,7 @@ class Dashboard::ItemsController < Dashboard::BaseController
   end
 
   def destroy
-    @item = Item.find(params[:id])
+    @item = Item.find_by(slug: params[:slug])
     if @item && @item.user == current_user
       if @item && @item.ordered?
         flash[:error] = "Attempt to delete #{@item.name} was thwarted!"
