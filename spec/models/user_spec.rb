@@ -2,6 +2,21 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   describe 'validations' do
+    before :context do
+      user = User.create(
+        email: "email",
+        slug: "email",
+        password: "password",
+        name: "name",
+        address: "address",
+        city: "city",
+        state: "state",
+        zip: "zip"
+      )
+    end
+    after :context do
+      User.destroy_all
+    end
     it { should validate_presence_of :email }
     it { should validate_uniqueness_of :email }
     it { should validate_presence_of :password }
@@ -24,6 +39,7 @@ RSpec.describe User, type: :model do
     it 'can be created as a default user' do
       user = User.create(
         email: "email",
+        slug: "email",
         password: "password",
         name: "name",
         address: "address",
@@ -38,6 +54,7 @@ RSpec.describe User, type: :model do
     it 'can be created as a merchant' do
       user = User.create(
         email: "email",
+        slug: "email",
         password: "password",
         name: "name",
         address: "address",
@@ -53,6 +70,7 @@ RSpec.describe User, type: :model do
     it 'can be created as an admin' do
       user = User.create(
         email: "email",
+        slug: "email",
         password: "password",
         name: "name",
         address: "address",
