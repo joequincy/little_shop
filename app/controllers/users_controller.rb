@@ -29,8 +29,10 @@ class UsersController < ApplicationController
 
   def update
     @user = current_user
+    if @user.email != params[:user][:email]
+      @user.slug = params[:user][:email].parameterize
+    end
     @user.update(user_update_params)
-    @user.slug = @user.email.parameterize
     if @user.save
       flash[:success] = "Your profile has been updated"
       redirect_to profile_path
