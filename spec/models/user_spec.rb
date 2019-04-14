@@ -200,6 +200,12 @@ RSpec.describe User, type: :model do
       expect(@m1.top_user_by_item_count.name).to eq(@u3.name)
       expect(@m1.top_user_by_item_count.quantity).to eq(10)
     end
+
+    describe "#to_param" do
+      it "returns the slug instead of the id" do
+        expect(@u1.to_param).to eq(@u1.slug)
+      end
+    end
   end
 
   describe 'class methods' do
