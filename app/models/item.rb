@@ -31,6 +31,18 @@ class Item < ApplicationRecord
       .limit(limit)
   end
 
+  def unique_slug
+    if Item.where(name: name).size > 1
+      if id
+        name + id
+      else
+        name + (Item.size + 1).to_s
+      end
+    else
+      name
+    end
+  end
+
   def convert_datetime_to_seconds(datetime)
     days_and_hours = datetime.split(":").first
     days = days_and_hours.split.first.to_i

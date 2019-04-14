@@ -9,6 +9,7 @@ class Dashboard::ItemsController < Dashboard::BaseController
 
   def create
     @item = current_user.items.new(item_params)
+    @item.slug = @item.unique_slug
     @item.active = true
     if @item.save
       flash[:success] = "Your Item has been saved!"
@@ -25,6 +26,7 @@ class Dashboard::ItemsController < Dashboard::BaseController
 
   def update
     @item = Item.find_by(slug: params[:slug])
+    @item.slug = @item.unique_slug
     if @item.update(item_params)
       flash[:success] = "Your Item has been updated!"
       redirect_to dashboard_items_path
