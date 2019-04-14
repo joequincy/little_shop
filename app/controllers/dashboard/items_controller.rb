@@ -26,7 +26,9 @@ class Dashboard::ItemsController < Dashboard::BaseController
 
   def update
     @item = Item.find_by(slug: params[:slug])
-    @item.slug = @item.unique_slug
+    if @item.name != item_params[:name]
+      @item.slug = @item.unique_slug(item_params[:name])
+    end
     if @item.update(item_params)
       flash[:success] = "Your Item has been updated!"
       redirect_to dashboard_items_path

@@ -31,11 +31,11 @@ class Item < ApplicationRecord
       .limit(limit)
   end
 
-  def unique_slug
-    if Item.where(name: name).where('slug != ?', slug).size >= 1
-      "#{name.parameterize}-#{id}"
+  def unique_slug(new_name = name)
+    if Item.where(name: new_name).where('slug != ?', slug).size >= 1
+      "#{new_name.parameterize}-#{id}"
     else
-      name.parameterize
+      new_name.parameterize
     end
   end
 
