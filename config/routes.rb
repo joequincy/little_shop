@@ -17,8 +17,8 @@ Rails.application.routes.draw do
   delete '/cart', to: 'cart#destroy', as: :empty_cart
   delete '/cart/items/:slug', to: 'cart#remove_item', as: :remove_item, constraints: slug
 
-  resources :merchants, only: [:index]
   resources :items, only: [:index, :show], param: :slug, constraints: slug
+  resources :merchants, only: [:index], param: :slug, constraints: slug
 
   # User Profile Paths
   get '/profile', to: 'users#show', as: :profile
@@ -41,16 +41,16 @@ Rails.application.routes.draw do
   namespace :admin do
     get '/dashboard', to: 'dashboard#index'
 
-    patch '/merchants/:id/downgrade', to: 'merchants#downgrade', as: :downgrade_merchant
-    patch '/users/:id/upgrade', to: 'users#upgrade', as: :upgrade_user
-    resources :users, only: [:index, :show]
+    patch '/merchants/:slug/downgrade', to: 'merchants#downgrade', as: :downgrade_merchant, constraints: slug
+    patch '/users/:slug/upgrade', to: 'users#upgrade', as: :upgrade_user, constraints: slug
+    resources :users, only: [:index, :show], param: :slug, constraints: slug
 
     resources :orders, only: [:show]
     patch '/orders/:order_id/ship', to: 'orders#ship', as: 'order_ship'
 
-    patch '/merchants/:id/enable', to: 'merchants#enable', as: :enable_merchant
-    patch '/merchants/:id/disable', to: 'merchants#disable', as: :disable_merchant
-    resources :merchants, only: [:show] do
+    patch '/merchants/:slug/enable', to: 'merchants#enable', as: :enable_merchant, constraints: slug
+    patch '/merchants/:slug/disable', to: 'merchants#disable', as: :disable_merchant, constraints: slug
+    resources :merchants, only: [:show], param: :slug, constraints: slug do
       resources :items, only: [:index, :new], param: :slug, constraints: slug
       resources :orders, only: [:show]
     end
