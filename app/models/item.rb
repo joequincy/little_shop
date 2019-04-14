@@ -32,14 +32,10 @@ class Item < ApplicationRecord
   end
 
   def unique_slug
-    if Item.where(name: name).size > 1
-      if id
-        name + id
-      else
-        name + (Item.size + 1).to_s
-      end
+    if Item.where(name: name).where('slug != ?', slug).size >= 1
+      "#{name.parameterize}-#{id}"
     else
-      name
+      name.parameterize
     end
   end
 
