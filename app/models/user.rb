@@ -96,6 +96,10 @@ class User < ApplicationRecord
          .limit(1).first
   end
 
+  def to_param
+    slug
+  end
+
   def self.active_merchants
     where(role: :merchant, active: true)
   end
