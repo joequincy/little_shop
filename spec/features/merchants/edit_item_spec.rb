@@ -48,6 +48,31 @@ RSpec.describe "Merchant editing an item" do
       end
     end
 
+    it "only changes slug if item name changes" do
+      fill_in :item_description, with: @updated_description
+      fill_in :item_price, with: @updated_price
+      fill_in :item_inventory, with: @updated_inventory
+      fill_in :item_image, with: @updated_image
+
+      click_button "Update Item"
+
+      updated_item = Item.find(@item.id)
+
+      expect(updated_item.slug).to eq(@item.slug)
+
+      visit dashboard_items_path
+      within "#item-#{@item.id}" do
+        click_link "edit"
+      end
+
+      fill_in :item_name, with: @updated_name
+      click_button "Update Item"
+
+      updated_item = Item.find(@item.id)
+
+      expect(updated_item.slug).to_not eq(@item.slug)
+    end
+
     it "can leave image blank" do
       fill_in :item_image, with: ""
       click_button "Update Item"
