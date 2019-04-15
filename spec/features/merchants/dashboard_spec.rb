@@ -92,4 +92,15 @@ RSpec.describe 'merchant dashboard' do
       end
     end
   end
+
+  describe 'merchant user visits their profile to see charts', js: true, driver: :selenium_chrome_headless do
+    scenario 'charts exist' do
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant)
+      visit dashboard_path # this required brew installing chromedriver
+
+      within '#sales-gauge' do
+        expect(page).to have_css('svg')
+      end
+    end
+  end
 end
