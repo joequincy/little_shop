@@ -101,6 +101,14 @@ RSpec.describe 'merchant dashboard' do
       within '#sales-gauge' do
         expect(page).to have_css('svg')
       end
+
+      within '#states-piechart' do
+        expect(page).to have_css('svg')
+      end
+
+      within '#cities-piechart' do
+        expect(page).to have_css('svg')
+      end
     end
   end
 end
