@@ -45,6 +45,10 @@
     <% end %>
     <%= tag.section id: "top-cities-by-items-shipped", class: "card-body float-left m-2" do %>
       <h5 class="card-title">Top Cities by Items Shipped</h5>
+        <div id="cities-piechart"></div>
+        <script type="text/javascript">
+          <%= render partial: 'charts/pie', formats: [:js], locals: {chartname: 'cities', columns: @merchant.top_cities_by_items_shipped(3).to_pie_columns(city: :quantity)} %>
+        </script>
       <ul>
         <% @merchant.top_cities_by_items_shipped(3).each do |item| %>
           <li><%= item.city %>, <%= item.state %>: <%= item.quantity %></li>
