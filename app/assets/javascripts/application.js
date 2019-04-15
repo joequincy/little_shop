@@ -11,6 +11,6 @@
 // about supported directives.
 //
 //= require rails-ujs
-//= require d3
-//= require c3
+//= require d3/d3.min.js
+//= require c3-0.6.14/c3.min.js
 //= require_tree .
