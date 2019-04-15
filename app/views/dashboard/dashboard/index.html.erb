@@ -25,6 +25,10 @@
     <% end %>
     <%= tag.section id: "percent-of-items-sold", class: "card-body float-left m-2" do %>
       <h5 class="card-title">Sold Items Percentage</h5>
+        <div id="sales-gauge"></div>
+        <script type="text/javascript">
+          <%= render partial: 'charts/gauge', formats: [:js], locals: {inventory_percent: @merchant.percent_of_items_sold} %>
+        </script>
         <p> You have sold <%= pluralize(@merchant.total_items_sold, 'item') %>, <%= number_to_percentage(@merchant.percent_of_items_sold, precision: 2) %> of your total inventory</p>
     <% end %>
     <%= tag.section id: "top-states-by-items-shipped", class: "card-body float-left m-2" do %>
