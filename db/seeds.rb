@@ -9,6 +9,7 @@ User.destroy_all
 
 admin = create(:admin)
 user = create(:user)
+users = create_list(:user, 10)
 merchant_1 = create(:merchant)
 
 merchant_2, merchant_3, merchant_4 = create_list(:merchant, 3)
@@ -20,7 +21,8 @@ item_1 = create(:item, user: merchant_1)
 item_2 = create(:item, user: merchant_2)
 item_3 = create(:item, user: merchant_3)
 item_4 = create(:item, user: merchant_4)
-create_list(:item, 10, user: merchant_1)
+items = create_list(:item, 10, user: merchant_1)
+base_items = [item_1, item_2, item_3, item_4]
 
 inactive_item_1 = create(:inactive_item, user: merchant_1)
 inactive_item_2 = create(:inactive_item, user: inactive_merchant_1)
@@ -47,8 +49,11 @@ order = create(:shipped_order, user: user)
 create(:fulfilled_order_item, order: order, item: item_1, price: 1, quantity: 1, created_at: (rng.rand(4)+1).days.ago, updated_at: rng.rand(59).minutes.ago)
 create(:fulfilled_order_item, order: order, item: item_2, price: 2, quantity: 1, created_at: (rng.rand(23)+1).hour.ago, updated_at: rng.rand(59).minutes.ago)
 
-
-
+(1..15).each do |i|
+  order = create(:shipped_order, user: users.sample)
+  create(:fulfilled_order_item, order: order, item: items.sample, price: 1, quantity: 1, created_at: (rng.rand(4)+1).days.ago, updated_at: rng.rand(59).minutes.ago)
+  create(:fulfilled_order_item, order: order, item: base_items.sample, price: 1, quantity: 1, created_at: (rng.rand(4)+1).days.ago, updated_at: rng.rand(59).minutes.ago)
+end
 
 
 puts 'seed data finished'
