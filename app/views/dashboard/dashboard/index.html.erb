@@ -33,6 +33,10 @@
     <% end %>
     <%= tag.section id: "top-states-by-items-shipped", class: "card-body float-left m-2" do %>
       <h5 class="card-title">Top States by Items Shipped</h5>
+        <div id="states-piechart"></div>
+        <script type="text/javascript">
+          <%= render partial: 'charts/pie', formats: [:js], locals: {chartname: 'states', columns: @merchant.top_states_by_items_shipped(3).to_pie_columns(state: :quantity)} %>
+        </script>
       <ul>
         <% @merchant.top_states_by_items_shipped(3).each do |item| %>
           <li><%= item.state %>: <%= item.quantity %></li>

@@ -1,0 +1,23 @@
+var pie<%= chartname.capitalize %> = c3.generate({
+  bindto: '#<%= chartname %>-piechart',
+  data: {
+    columns: [
+      <% columns.each_with_index do |column, i| %>['<%= column[:name] %>', <%= column[:data] %>]<%= (i == columns.size - 1)? "" : ",\n      " %><% end %>
+    ],
+    type : 'pie',
+  },
+  pie: {
+    label: {
+      format: orderFormat
+    }
+  },
+  tooltip: {
+    format: {
+      value: orderFormat
+    }
+  }
+});
+
+function orderFormat(value, ratio, id, index = null){
+  return `${value} orders`;
+}
