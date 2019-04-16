@@ -15,6 +15,17 @@
 
 <%= tag.div class: "card" do %>
   <%= tag.section class: "statistics card-body float-left m-4" do %>
+    <%= tag.section id: "sales-history", class: "card-body m-2" do %>
+      <h5 class="card-title">Recent Sales History</h5>
+      <div id="sales-timeseries"></div>
+      <script type="text/javascript">
+        <%= render partial: 'charts/timeseries',
+                   formats: [:js],
+                   locals: {chartname: 'sales',
+                            chartdata: 'orders',
+                            columns: @sales_history} %>
+      </script>
+    <% end %>
     <%= tag.section id: "top-items-sold-by-quantity", class: "card-body float-left m-2" do %>
       <h5 class="card-title">Top Items Sold by Quantity</h5>
       <ul>
@@ -25,33 +36,43 @@
     <% end %>
     <%= tag.section id: "percent-of-items-sold", class: "card-body float-left m-2" do %>
       <h5 class="card-title">Sold Items Percentage</h5>
-        <div id="sales-gauge"></div>
-        <script type="text/javascript">
-          <%= render partial: 'charts/gauge', formats: [:js], locals: {inventory_percent: @merchant.percent_of_items_sold} %>
-        </script>
-        <p> You have sold <%= pluralize(@merchant.total_items_sold, 'item') %>, <%= number_to_percentage(@merchant.percent_of_items_sold, precision: 2) %> of your total inventory</p>
+      <div id="sales-gauge"></div>
+      <script type="text/javascript">
+        <%= render partial: 'charts/gauge', formats: [:js], locals: {inventory_percent: @merchant.percent_of_items_sold} %>
+      </script>
+      <p> You have sold <%= pluralize(@merchant.total_items_sold, 'item') %>, <%= number_to_percentage(@merchant.percent_of_items_sold, precision: 2) %> of your total inventory</p>
     <% end %>
     <%= tag.section id: "top-states-by-items-shipped", class: "card-body float-left m-2" do %>
       <h5 class="card-title">Top States by Items Shipped</h5>
-        <div id="states-piechart"><ul>
-          <% @merchant.top_states_by_items_shipped(3).each do |item| %>
-            <li><%= item.state %>: <%= item.quantity %></li>
-          <% end %>
-        </ul></div>
-        <script type="text/javascript">
-          <%= render partial: 'charts/pie', formats: [:js], locals: {chartname: 'states', columns: @merchant.top_states_by_items_shipped(3).to_pie_columns(state: :quantity)} %>
-        </script>
+      <div id="states-piechart"><ul>
+        <% @merchant.top_states_by_items_shipped(3).each do |item| %>
+          <li><%= item.state %>: <%= item.quantity %></li>
+        <% end %>
+      </ul></div>
+      <script type="text/javascript">
+        <%= render partial: 'charts/pie',
+                   formats: [:js],
+                   locals: {chartname: 'states',
+                            chartdata: 'orders',
+                            columns: @merchant.top_states_by_items_shipped(3).to_pie_columns(state: :quantity)
+                           } %>
+      </script>
     <% end %>
     <%= tag.section id: "top-cities-by-items-shipped", class: "card-body float-left m-2" do %>
       <h5 class="card-title">Top Cities by Items Shipped</h5>
-        <div id="cities-piechart"><ul>
-          <% @merchant.top_cities_by_items_shipped(3).each do |item| %>
-            <li><%= item.city %>, <%= item.state %>: <%= item.quantity %></li>
-          <% end %>
-        </ul></div>
-        <script type="text/javascript">
-          <%= render partial: 'charts/pie', formats: [:js], locals: {chartname: 'cities', columns: @merchant.top_cities_by_items_shipped(3).to_pie_columns(city: :quantity)} %>
-        </script>
+      <div id="cities-piechart"><ul>
+        <% @merchant.top_cities_by_items_shipped(3).each do |item| %>
+          <li><%= item.city %>, <%= item.state %>: <%= item.quantity %></li>
+        <% end %>
+      </ul></div>
+      <script type="text/javascript">
+        <%= render partial: 'charts/pie',
+                   formats: [:js],
+                   locals: {chartname: 'cities',
+                            chartdata: 'orders',
+                            columns: @merchant.top_cities_by_items_shipped(3).to_pie_columns(city: :quantity)
+                           } %>
+      </script>
     <% end %>
     <%= tag.section id: "top-users-by-money-spent", class: "card-body float-left m-2" do %>
       <h5 class="card-title">Top Users by Money Spent</h5>

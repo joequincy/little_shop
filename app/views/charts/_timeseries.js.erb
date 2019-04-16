@@ -1,0 +1,36 @@
+var timeseries<%= chartname.capitalize %> = c3.generate({
+  bindto: '#<%= chartname %>-timeseries',
+  data: {
+    columns: [
+      <% columns.each_with_index do |column, i| %><%= raw(column) %><%= (i == columns.size - 1)? "" : ",\n      " %><% end %>
+    ],
+    x : 'dates',
+  },
+  axis: {
+    x: {
+      type: 'timeseries',
+      tick: {
+        format: '%b \'%y',
+        rotate: 90
+      }
+    },
+    y: {
+      tick: {
+        format: d3.format('$,')
+      }
+    }
+  },
+  legend: {
+    show: false
+  },
+  tooltip: {
+    format: {
+      name: function (name, ratio, id, index) { return 'Sales' }
+    }
+  },
+  grid: {
+    x: {
+      show: true
+    }
+  }
+});
