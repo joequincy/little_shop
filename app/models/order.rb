@@ -72,4 +72,13 @@ class Order < ApplicationRecord
         .order('quantity desc')
         .limit(limit)
   end
+
+  def self.sitewide_sales
+    where(status: :shipped)
+    .joins(order_items: :item)
+    .joins(items: :user)
+    .select('SUM(order_items.quantity * order_items.price) AS sales,
+             users.name AS merchant_name')
+    .group('merchant_name')
+  end
 end
