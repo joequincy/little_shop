@@ -96,6 +96,17 @@ class User < ApplicationRecord
          .limit(1).first
   end
 
+  def sales_history
+    items.select("date_trunc('month', orders.updated_at) AS month,
+                  sum(order_items.quantity * order_items.price) AS sales")
+    .joins(order_items: :order)
+    .distinct
+    .where(orders: {status: :shipped})
+    .where("orders.updated_at > (date_trunc('month', now()) - interval '11 months')")
+    .group('month')
+    .order('month DESC')
+  end
+
   def to_param
     slug
   end
