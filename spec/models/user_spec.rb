@@ -201,10 +201,50 @@ RSpec.describe User, type: :model do
       expect(@m1.top_user_by_item_count.quantity).to eq(10)
     end
 
-    describe "#to_param" do
-      it "returns the slug instead of the id" do
-        expect(@u1.to_param).to eq(@u1.slug)
-      end
+    it '.to_param' do
+      expect(@u1.to_param).to eq(@u1.slug)
+    end
+
+    it '.sales_history' do
+      item = create(:item, merchant_id: @m2.id)
+      order = create(:shipped_order, user: @u1)
+      create(:fulfilled_order_item, item: item, order: order, price: 1, quantity: 12)
+      order = create(:shipped_order, user: @u1, created_at: 1.month.ago, updated_at: 1.month.ago)
+      create(:fulfilled_order_item, item: item, order: order, price: 1, quantity: 11)
+      order = create(:shipped_order, user: @u1, created_at: 2.months.ago, updated_at: 2.months.ago)
+      create(:fulfilled_order_item, item: item, order: order, price: 1, quantity: 10)
+      order = create(:shipped_order, user: @u1, created_at: 3.months.ago, updated_at: 3.months.ago)
+      create(:fulfilled_order_item, item: item, order: order, price: 1, quantity: 9)
+      order = create(:shipped_order, user: @u1, created_at: 4.months.ago, updated_at: 4.months.ago)
+      create(:fulfilled_order_item, item: item, order: order, price: 1, quantity: 8)
+      order = create(:shipped_order, user: @u1, created_at: 5.months.ago, updated_at: 6.months.ago)
+      create(:fulfilled_order_item, item: item, order: order, price: 1, quantity: 6)
+      order = create(:shipped_order, user: @u1, created_at: 7.months.ago, updated_at: 7.months.ago)
+      create(:fulfilled_order_item, item: item, order: order, price: 1, quantity: 5)
+      order = create(:shipped_order, user: @u1, created_at: 8.months.ago, updated_at: 9.months.ago)
+      create(:fulfilled_order_item, item: item, order: order, price: 1, quantity: 3)
+      order = create(:shipped_order, user: @u1, created_at: 10.months.ago, updated_at: 10.months.ago)
+      create(:fulfilled_order_item, item: item, order: order, price: 1, quantity: 2)
+      order = create(:shipped_order, user: @u1, created_at: 11.months.ago, updated_at: 11.months.ago)
+      create(:fulfilled_order_item, item: item, order: order, price: 1, quantity: 1)
+      order = create(:shipped_order, user: @u1, created_at: 12.months.ago, updated_at: 12.months.ago)
+      create(:fulfilled_order_item, item: item, order: order, price: 1, quantity: 1)
+
+      sales_history = @m2.sales_history
+      expect(sales_history.length).to eq(10)
+
+      first_month = sales_history.first
+      require 'date'
+      test_date = Date.today
+      expect(first_month.sales).to eq(12)
+      expect(first_month.month.month).to eq(test_date.month)
+      expect(first_month.month.year).to eq(test_date.year)
+
+      last_month = sales_history.last
+      test_offset = test_date.prev_year.next_month
+      expect(last_month.sales).to eq(1)
+      expect(last_month.month.month).to eq(test_offset.month)
+      expect(last_month.month.year).to eq(test_offset.year)
     end
   end
 

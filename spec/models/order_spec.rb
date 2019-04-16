@@ -47,33 +47,33 @@ RSpec.describe Order, type: :model do
 
   describe 'class methods' do
     before :each do
-      user = create(:user)
+      @user = create(:user)
       @merchant = create(:merchant)
       @i1, @i2 = create_list(:item, 2, user: @merchant)
 
-      @o1, @o2, @o3, @o4, @o5 = create_list(:shipped_order, 5, user: user)
-      oi1 = create(:fulfilled_order_item, order: @o1)
-      oi2 = create(:fulfilled_order_item, order: @o2)
-      oi3 = create(:fulfilled_order_item, order: @o3)
-      oi4 = create(:fulfilled_order_item, order: @o4)
-      oi5 = create(:fulfilled_order_item, order: @o5)
+      @o1, @o2, @o3, @o4, @o5 = create_list(:shipped_order, 5, user: @user)
+      oi1 = create(:fulfilled_order_item, order: @o1, item: @i1)
+      oi2 = create(:fulfilled_order_item, order: @o2, item: @i2)
+      oi3 = create(:fulfilled_order_item, order: @o3, item: @i1)
+      oi4 = create(:fulfilled_order_item, order: @o4, item: @i2)
+      oi5 = create(:fulfilled_order_item, order: @o5, item: @i1)
 
-      @o6 = create(:shipped_order, user: user)
-      oi2 = create(:fulfilled_order_item, order: @o6)
+      @o6 = create(:shipped_order, user: @user)
+      oi2 = create(:fulfilled_order_item, order: @o6, item: @i2)
 
-      @o7, @o8 = create_list(:order, 2, user: user)
+      @o7, @o8 = create_list(:order, 2, user: @user)
       create(:order_item, order: @o7, item: @i1)
-      create(:order_item, order: @o7)
+      create(:order_item, order: @o7, item: @i1)
       create(:order_item, order: @o8, item: @i2)
 
-      @packaged_orders = create_list(:packaged_order, 3, user: user)
-      create(:fulfilled_order_item, order: @packaged_orders[0])
-      create(:fulfilled_order_item, order: @packaged_orders[1])
-      create(:fulfilled_order_item, order: @packaged_orders[2])
+      @packaged_orders = create_list(:packaged_order, 3, user: @user)
+      create(:fulfilled_order_item, order: @packaged_orders[0], item: @i1)
+      create(:fulfilled_order_item, order: @packaged_orders[1], item: @i1)
+      create(:fulfilled_order_item, order: @packaged_orders[2], item: @i1)
 
-      @cancelled_orders = create_list(:cancelled_order, 2, user: user)
-      create(:order_item, order: @cancelled_orders[0])
-      create(:order_item, order: @cancelled_orders[1])
+      @cancelled_orders = create_list(:cancelled_order, 2, user: @user)
+      create(:order_item, order: @cancelled_orders[0], item: @i1)
+      create(:order_item, order: @cancelled_orders[1], item: @i1)
     end
 
     it '.pending_orders_for_merchant' do
@@ -101,6 +101,27 @@ RSpec.describe Order, type: :model do
 
     it '.sorted_by_items_shipped' do
       expect(Order.sorted_by_items_shipped).to eq([@o6, @o5, @o4, @o3, @o2, @o1])
+    end
+
+    it '.sitewide_sales' do
+      merchant = create(:merchant)
+      unlucky_merchant = create(:merchant)
+      i1, i2 = create_list(:item, 2, user: merchant)
+
+      o1, o2, o3, o4, o5 = create_list(:shipped_order, 5, user: @user)
+      oi1 = create(:fulfilled_order_item, order: o1, item: i1, quantity: 1, price: 1)
+      oi2 = create(:fulfilled_order_item, order: o2, item: i2, quantity: 1, price: 1)
+      oi3 = create(:fulfilled_order_item, order: o3, item: i1, quantity: 1, price: 1)
+      oi4 = create(:fulfilled_order_item, order: o4, item: i2, quantity: 1, price: 1)
+      oi5 = create(:fulfilled_order_item, order: o5, item: i1, quantity: 1, price: 1)
+
+      o6 = create(:shipped_order, user: @user)
+      oi2 = create(:fulfilled_order_item, order: o6, item: i2, quantity: 1, price: 1)
+
+      sitewide_sales = Order.sitewide_sales
+      expect(sitewide_sales.length).to eq(2)
+      expect(sitewide_sales.first.merchant_name).to eq(@merchant.name)
+      expect(sitewide_sales.last.sales).to eq(6)
     end
   end
 
