@@ -18,6 +18,14 @@ var pie<%= chartname.capitalize %> = c3.generate({
   }
 });
 
+<% if chartdata == 'orders'
+  @format_string = '${value} orders'
+elsif chartdata == 'money'
+  @format_string = '\$${value}'
+else
+  @format_string = '${value}'
+end %>
+
 function orderFormat(value, ratio, id, index = null){
-  return `${value} orders`;
+  return `<%= raw(@format_string) %>`;
 }
