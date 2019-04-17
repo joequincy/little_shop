@@ -25,7 +25,7 @@
                             chartdata: 'orders',
                             columns: @sales_history} %>
       </script>
-    <% end %>
+    <% end if current_merchant? %>
     <%= tag.section id: "top-items-sold-by-quantity", class: "card-body float-left m-2" do %>
       <h5 class="card-title">Top Items Sold by Quantity</h5>
       <ul>
